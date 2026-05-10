@@ -5,8 +5,9 @@ Blinkit Analysis
 ```sql
 SELECT * FROM blinkit_data
 ```
-•	DATA CLEANING:
-Cleaning the Item_Fat_Content field ensures data consistency and accuracy in analysis. The presence of multiple variations of the same category (e.g., LF, low fat vs. Low Fat) can cause issues in reporting, aggregations, and filtering. By standardizing these values, we improve data quality, making it easier to generate insights and maintain uniformity in our datasets.
+## •	DATA CLEANING:
+Cleaning the Item_Fat_Content field ensures data consistency and accuracy in analysis. The presence of multiple variations of the same category (e.g., LF, low fat
+vs. Low Fat) can cause issues in reporting, aggregations, and filtering. By standardizing these values, we improve data quality, making it easier to generate insights and maintain uniformity in our datasets.
 ```sql
 UPDATE blinkit_data
 SET Item_Fat_Content = 
@@ -27,43 +28,43 @@ After executing this query check the data has been cleaned or not using below qu
 
 
 
-A. KPI’s
-1. TOTAL SALES:
+## A. KPI’s
+**1. TOTAL SALES:**
 ```sql
 SELECT CAST(SUM(Total_Sales) / 1000000.0 AS DECIMAL(10,2)) AS Total_Sales_Million
 FROM blinkit_data;
  ```
-2. AVERAGE SALES
+**2. AVERAGE SALES**
 ```sql
 SELECT CAST(AVG(Total_Sales) AS INT) AS Avg_Sales
 FROM blinkit_data;
 ``` 
-3. NO OF ITEMS
+**3. NO OF ITEMS**
 ```sql
 SELECT COUNT(*) AS No_of_Orders
 FROM blinkit_data;
  ```
-4. AVG RATING
+**4. AVG RATING**
 ```sql
 SELECT CAST(AVG(Rating) AS DECIMAL(10,1)) AS Avg_Rating
 FROM blinkit_data;
 ``` 
 
-B. Total Sales by Fat Content:
+## B. Total Sales by Fat Content:
 ```sql
 SELECT Item_Fat_Content, CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales
 FROM blinkit_data
 GROUP BY Item_Fat_Content
 ``` 
 
-C. Total Sales by Item Type
+## C. Total Sales by Item Type
 ```sql
 SELECT Item_Type, CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales
 FROM blinkit_data
 GROUP BY Item_Type
 ORDER BY Total_Sales DESC
 ``` 
-D. Fat Content by Outlet for Total Sales
+## D. Fat Content by Outlet for Total Sales
 ```sql
 SELECT Outlet_Location_Type, 
        ISNULL([Low Fat], 0) AS Low_Fat, 
@@ -83,11 +84,11 @@ PIVOT
 ORDER BY Outlet_Location_Type;
 ```
  
-Query Explanations
+## Query Explanations
 This query aims to transform the blinkit_data table to display total sales (Total_Sales) for each combination of Outlet_Location_Type and Item_Fat_Content. The result will show Outlet_Location_Type as rows and Item_Fat_Content categories ("Low Fat" and "Regular") as columns. If there are no sales for a particular combination, the query will display 0 instead of NULL.
-Detailed Explanation:
-1.	Subquery
-o	Aggregation:
+**Detailed Explanation:**
+**1.	Subquery**
+**o	Aggregation:**
 sql
 CopyEdit
 
@@ -102,8 +103,10 @@ GROUP BY
     Outlet_Location_Type, 
     Item_Fat_Content
 ```
-	Purpose: This subquery groups the data by Outlet_Location_Type and Item_Fat_Content, calculating the total sales for each combination.
-	CAST(SUM(Total_Sales) AS DECIMAL(10,2)): Sums the Total_Sales for each group and casts the result to a decimal with two decimal places for precision.
+**	Purpose:** This subquery groups the data by Outlet_Location_Type and Item_Fat_Content, calculating the total sales for each combination.
+
+**	CAST(SUM(Total_Sales) AS DECIMAL(10,2)):** Sums the Total_Sales for each group and casts the result to a decimal with two decimal places for precision.
+
 2.	PIVOT Operation:
 o	Pivoting:
 sql
