@@ -2,7 +2,9 @@
 
 Blinkit Analysis
 •	See all the data imported:
+```sql
 SELECT * FROM blinkit_data
+```
 •	DATA CLEANING:
 Cleaning the Item_Fat_Content field ensures data consistency and accuracy in analysis. The presence of multiple variations of the same category (e.g., LF, low fat vs. Low Fat) can cause issues in reporting, aggregations, and filtering. By standardizing these values, we improve data quality, making it easier to generate insights and maintain uniformity in our datasets.
 ```sql
@@ -14,7 +16,10 @@ SET Item_Fat_Content =
         ELSE Item_Fat_Content
     END;
 ```
-	After executing this query check the data has been cleaned or not using below query
+
+After executing this query check the data has been cleaned or not using below query
+
+	
 ```sql
 	SELECT DISTINCT Item_Fat_Content FROM blinkit_data;
 ```
@@ -85,6 +90,8 @@ Detailed Explanation:
 o	Aggregation:
 sql
 CopyEdit
+
+```sql
 SELECT 
     Outlet_Location_Type, 
     Item_Fat_Content, 
@@ -94,23 +101,27 @@ FROM
 GROUP BY 
     Outlet_Location_Type, 
     Item_Fat_Content
+```
 	Purpose: This subquery groups the data by Outlet_Location_Type and Item_Fat_Content, calculating the total sales for each combination.
 	CAST(SUM(Total_Sales) AS DECIMAL(10,2)): Sums the Total_Sales for each group and casts the result to a decimal with two decimal places for precision.
 2.	PIVOT Operation:
 o	Pivoting:
 sql
 CopyEdit
+```sql
 PIVOT 
 (
     SUM(Total_Sales) 
     FOR Item_Fat_Content IN ([Low Fat], [Regular])
 ) AS PivotTable
+```
 	Purpose: Transforms the rows of Item_Fat_Content into columns ([Low Fat] and [Regular]).
 	SUM(Total_Sales): Aggregates the Total_Sales for each Item_Fat_Content category within each Outlet_Location_Type.
 3.	Main Query:
 o	Selecting and Handling NULLs:
 sql
 CopyEdit
+```sql
 SELECT 
     Outlet_Location_Type, 
     ISNULL([Low Fat], 0) AS Low_Fat, 
@@ -119,6 +130,7 @@ FROM
     PivotTable
 ORDER BY 
     Outlet_Location_Type;
+```
 	ISNULL([Low Fat], 0) AS Low_Fat: Replaces any NULL values in the [Low Fat] column with 0 and renames the column to Low_Fat.
 	ISNULL([Regular], 0) AS Regular: Similarly, replaces NULL values in the [Regular] column with 0.
 	ORDER BY Outlet_Location_Type: Sorts the final result set by Outlet_Location_Type.
@@ -131,13 +143,16 @@ When performing a PIVOT operation, if a particular combination of Outlet_Locatio
 
 
 E. Total Sales by Outlet Establishment
+```sql
 SELECT Outlet_Establishment_Year, CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales
 FROM blinkit_data
 GROUP BY Outlet_Establishment_Year
 ORDER BY Outlet_Establishment_Year
- 
+ ```
 
 F. Percentage of Sales by Outlet Size
+
+```sql
 SELECT 
     Outlet_Size, 
     CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales,
@@ -145,7 +160,7 @@ SELECT
 FROM blinkit_data
 GROUP BY Outlet_Size
 ORDER BY Total_Sales DESC;
-
+```
 Query Explanation:
 Outlet_Size: This column represents the size category of the outlet (e.g., Small, Medium, Large).
 CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales:
@@ -162,16 +177,17 @@ o	SUM(... ) OVER(): The outer SUM combined with the OVER() clause calculates the
  
 
 G. Sales by Outlet Location
+```sql
 SELECT Outlet_Location_Type, CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales
 FROM blinkit_data
 GROUP BY Outlet_Location_Type
 ORDER BY Total_Sales DESC
- 
+ ```
 
 
 
 H. All Metrics by Outlet Type:
-SELECT Outlet_Type, 
+```sqlSELECT Outlet_Type, 
 CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales,
 		CAST(AVG(Total_Sales) AS DECIMAL(10,0)) AS Avg_Sales,
 		COUNT(*) AS No_Of_Items,
@@ -180,4 +196,4 @@ CAST(SUM(Total_Sales) AS DECIMAL(10,2)) AS Total_Sales,
 FROM blinkit_data
 GROUP BY Outlet_Type
 ORDER BY Total_Sales DESC
-
+```
