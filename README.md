@@ -52,7 +52,7 @@ GROUP BY Item_Type
 ORDER BY Total_Sales DESC
  
 D. Fat Content by Outlet for Total Sales
-'''SQL
+```sql
 SELECT Outlet_Location_Type, 
        ISNULL([Low Fat], 0) AS Low_Fat, 
        ISNULL([Regular], 0) AS Regular
@@ -69,7 +69,7 @@ PIVOT
     FOR Item_Fat_Content IN ([Low Fat], [Regular])
 ) AS PivotTable
 ORDER BY Outlet_Location_Type;
-'''
+```
  
 Query Explanations
 This query aims to transform the blinkit_data table to display total sales (Total_Sales) for each combination of Outlet_Location_Type and Item_Fat_Content. The result will show Outlet_Location_Type as rows and Item_Fat_Content categories ("Low Fat" and "Regular") as columns. If there are no sales for a particular combination, the query will display 0 instead of NULL.
